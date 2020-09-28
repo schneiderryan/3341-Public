@@ -27,31 +27,41 @@ parser code {:
 
 :};
 
-terminal PLUS, MINUS, LPAREN, RPAREN;
+terminal RETURN, SEMICOLON, PLUS, MINUS, LPAREN, RPAREN, MULTIPLY;
 terminal Long    INTCONST;
 
 non terminal Program         program;
 non terminal Expr            expr;
 non terminal BinaryExpr      binaryExpr;
+non terminal UnaryExpr       unaryExpr;
 
 precedence left PLUS, MINUS;
+precedence left MULTIPLY;
 
 start with program;
 
-program ::= expr:e
+program ::= RETURN expr:e SEMICOLON
             {: RESULT = new Program(e, loc(eleft, eright)); :}
          ;
 
 expr ::= INTCONST:c
-         {: RESULT = new ConstExpr(c, loc(cleft, cright)); :}
+         {: RESULT = new ConstExpr(c, loc(cleft, cright)); :} 
       |  binaryExpr:e
          {: RESULT = e; :}
       |  LPAREN expr:e RPAREN
          {: RESULT = e; :}
+      | unaryExpr: e
+         {: RESULT = e; :}  
       ;
 
 binaryExpr ::= expr:e1 PLUS expr:e2
                {: RESULT = new BinaryExpr(e1, BinaryExpr.PLUS, e2, loc(e1left, e1right)); :}
             |  expr:e1 MINUS expr:e2
                {: RESULT = new BinaryExpr(e1, BinaryExpr.MINUS, e2, loc(e1left, e1right)); :}
+            | expr:e1 MULTIPLY expr:e2
+               {: RESULT = new BinaryExpr(e1, BinaryExpr.MULTIPLY, e2, loc(e1left, e1right)); :}
+            ;
+
+unaryExpr ::= MINUS expr:e
+               {: RESULT = new UnaryExpr(e, UnaryExpr.MINUS, loc(eleft, eright)); :}
             ;

@@ -61,6 +61,9 @@ white_space = {new_line} | [ \t\f]
 {IntLiteral} { return symbol("Intconst", INTCONST, new Long(Long.parseLong(yytext()))); }
 
 /* separators */
+"return"          { return symbol("return", RETURN); }
+";"               { return symbol(";", SEMICOLON); }
+"*"               { return symbol("*", MULTIPLY); }
 "+"               { return symbol("+",  PLUS); }
 "-"               { return symbol("-",  MINUS); }
 "("               { return symbol("(",  LPAREN); }
